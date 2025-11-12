@@ -101,21 +101,31 @@ navLinks.forEach(link => {
   const form = document.getElementById("contactForm");
   if (!form) return;
 
+  // Inicializar EmailJS con tu Public Key
+  (function () {
+    if (window.emailjs) {
+      emailjs.init("-uL-biHRp5GSP9cf4"); // ✅ Tu Public Key
+    } else {
+      console.error("❌ EmailJS no está cargado o no se pudo inicializar.");
+    }
+  })();
+
   const submitBtn = form.querySelector('button[type="submit"]');
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     if (!window.emailjs) {
-      alert("No se pudo cargar el servicio de correo. Intenta nuevamente más tarde.");
+      alert("❌ No se pudo cargar el servicio de correo. Intenta nuevamente más tarde.");
       return;
     }
 
     try {
-      submitBtn && (submitBtn.disabled = true, submitBtn.textContent = "Enviando...");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Enviando...";
 
       const params = {
-        to_email: "servicios.peru@humantyx.com",
-        tipo: form.tipo?.value || "",
+        tipo: form.tipoSolicitante?.value || "",
         nombre: form.nombre?.value || "",
         apellido: form.apellido?.value || "",
         email: form.email?.value || "",
@@ -125,21 +135,22 @@ navLinks.forEach(link => {
         mensaje: form.mensaje?.value || ""
       };
 
-      // Reemplaza con tus IDs reales de EmailJS
-      const SERVICE_ID = "SERVICE_ID_AQUI";
-      const TEMPLATE_ID = "TEMPLATE_ID_AQUI";
+      // ✅ Tus IDs reales de EmailJS
+      const SERVICE_ID = "service_ekq5qhq";
+      const TEMPLATE_ID = "template_k05qs3n";
 
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, params);
-      alert("¡Gracias! Tu solicitud fue enviada correctamente.");
+      alert("✅ ¡Gracias! Tu solicitud fue enviada correctamente.");
       form.reset();
 
-      // Restablecer tipo por defecto a Empresa
+      // Volver al tipo "Empresa" por defecto
       document.getElementById("btnEmpresa")?.click();
     } catch (err) {
-      console.error(err);
-      alert("Hubo un problema al enviar tu solicitud. Por favor, inténtalo nuevamente.");
+      console.error("⚠️ Error al enviar:", err);
+      alert("⚠️ Ocurrió un problema al enviar tu solicitud. Intenta nuevamente.");
     } finally {
-      submitBtn && (submitBtn.disabled = false, submitBtn.textContent = "Solicitar Reunión o Consulta");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Solicitar Reunión o Consulta";
     }
   });
 })();
